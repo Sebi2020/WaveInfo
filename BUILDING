@@ -1,0 +1,6 @@
+To build waveinfo you need the current version of mingw32.
+
+If everything works fine and if you're using cmd.exe to build Waveinfo, you can build Waveinfo
+by typing "make" or "mingw32-make" depending on your configuration.
+
+Make sure you're in the source directory if you try to build Waveinfo.
