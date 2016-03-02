@@ -16,20 +16,19 @@
 
 #include <stdint.h>
 
+// Typedefs
+typedef struct RIFF_Header RIFF_header;
+typedef struct fmt_chunk_data fmt_chunk_data;
+typedef struct format_chunk format_chunk;
+
+// Structs
 struct RIFF_header{
 	char chunkId[4];			// Format-Identifizierer (RIFF)
 	uint32_t chunkSize;			// Datei-Gräße
 	char riffType[4];			// Container-Format (WAVE)
 };
 
-struct fmt_chunk_head {
-	char fmt_head[4];
-	uint32_t fmt_length;
-} __attribute__((packed));
-
-typedef struct fmt_chunk_head fmt_chk_head;
-struct format_chunk {
-	fmt_chk_head head;
+struct fmt_chunk_data {
 	uint8_t wFormatTag[2];			// Audio-Format
 	uint16_t wChannels;				// Kanäle
 	uint32_t dwSamplesPerSec;		// Sample-Rate
@@ -37,17 +36,23 @@ struct format_chunk {
 	uint16_t wBlockAlign;			// Größe eines Frames in Byte
 	uint16_t wBitsPerSample;		// Auflösung (Quantisierung)
 	union {
-		uint16_t wValidBitsPerSample;
-		uint16_t wSamplesPerBlock;
-		uint16_t wReserved;
+		uint16_t wValidBitsPerSample;	// Aufnahme-Auflösung
+		uint16_t wSamplesPerBlock;		// Samples pro Block (std. 1)
+		uint16_t wReserved;				// Reservierte verwendung durch Third-Party-Software
 	} Samples;
-	uint32_t dwChannelMask;
-	uint8_t subtype[16];
+	uint32_t dwChannelMask;				// Kanal-Maske (siehe unten)
+	uint8_t subtype[16];				// Audio-Daten-Typ GUID (Leitet sich vom Format-Tag ab)
+} __attribute__((packed));				// wird von Microsoft verwendet für RIFF-Format Erweiterungen
+										// und von MS-Windows Miniport-Treibern
+										
+struct format_chunk {
+	char chunkId[4];			// fmt-Chunk Identifizierer (fmt )
+	uint32_t chunkSize;		// Länge des fmt (Format)-Chunks	
+	fmt_chunk_data data;
 } __attribute__((packed));
-
-typedef struct wav_header wav_header;
-typedef struct format_chunk format_chunk;
-
+								
+// Macros
+// Subtype GUIDs (MS Extension)
 #define DEFINE_WAVEFORMATEX_GUID(x) \
     (uint8_t)(x),0x0,0x0,0x0,0x0,0x0, 0x10, 0x0,0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71
 

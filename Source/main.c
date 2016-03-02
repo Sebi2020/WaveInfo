@@ -79,14 +79,14 @@ int main(int argc, char** argv) {
 			printf("This program comes with ABSOLUTELY NO WARRANTY!\r\n");
 			exit(0);
 	} else if(strcmp(argv[1], "-c") == 0) {
-			printf("Copyright (C) 2016 Informatikonline.net / Energetic-Tech\r\n");
+			printf("Copyright (C) 2016 Informatikonline.net / Energetic Tech\r\n");
 			exit(0);
 	} else if(strcmp(argv[1], "-v") == 0) {
 			printf("Programmversion: %s", TOSTRING(VERSION));
 			exit(0);
 	}
 	struct RIFF_header header;
-	format_chunk fmt_header;
+	format_chunk fmt_chunk;
 	FILE* ifile = 0x0;
 	ifile = fopen(argv[1], "rb");
 	if(ifile == 0x0) {
@@ -110,9 +110,9 @@ int main(int argc, char** argv) {
 	printf("RIFF-Type:\tWAVE\r\n");
 	printf("--- HEADER - END ---\r\n\r\n");
 
-	fread(&fmt_header,2,22, ifile);
+	fread(&fmt_chunk,2,22, ifile);
 
-	if(strncmp("fmt ", fmt_header.head.fmt_head,4) != 0) {
+	if(strncmp("fmt ", fmt_chunk.chunkId,4) != 0) {
 		fprintf(stderr, "No fmt-Chunk found!");
 		exit(3);
 	}
@@ -120,20 +120,20 @@ int main(int argc, char** argv) {
 	printf("[INFO] fmt-Chunk vorhanden!\r\n");
 	printf("--------- fmt - Chunk ---------\r\n");
 	printf("ChunkId:\t\tfmt \r\n");
-	wprintf(L"Länge (fmt):\t\t%d Bytes\r\n", fmt_header.head.fmt_length);
+	wprintf(L"Länge (fmt):\t\t%d Bytes\r\n", fmt_chunk.chunkSize);
 	printf("Audio-Format:\t\t");
-	print_audio_fmt(*((uint16_t*) fmt_header.wFormatTag));
+	print_audio_fmt(*((uint16_t*) fmt_chunk.data.wFormatTag));
 	wprintf(L"Kanäle:\t\t\t");
-	print_channels(fmt_header.wChannels);
-	printf("Sample-Rate:\t\t%d Samples/s\r\n", fmt_header.dwSamplesPerSec);
-	printf("Datenrate:\t\t%d kbit/s\r\n", (fmt_header.dwAvgBytesPerSec*8)/1024);
-	wprintf(L"Frame-Größe:\t\t%d Bytes/Frame\r\n", fmt_header.wBlockAlign);
-	printf("Bit-Tiefe:\t\t%d Bit\r\n", fmt_header.wBitsPerSample);
-	printf("Bit-Tiefe (rec):\t%d Bit\r\n", fmt_header.Samples.wValidBitsPerSample);
-	printf("Kanal-Maske:\t\t0x%03X\r\n", fmt_header.dwChannelMask);
+	print_channels(fmt_chunk.data.wChannels);
+	printf("Sample-Rate:\t\t%d Samples/s\r\n", fmt_chunk.data.dwSamplesPerSec);
+	printf("Datenrate:\t\t%d kbit/s\r\n", (fmt_chunk.data.dwAvgBytesPerSec*8)/1024);
+	wprintf(L"Frame-Größe:\t\t%d Bytes/Frame\r\n", fmt_chunk.data.wBlockAlign);
+	printf("Bit-Tiefe:\t\t%d Bit\r\n", fmt_chunk.data.wBitsPerSample);
+	printf("Bit-Tiefe (rec):\t%d Bit\r\n", fmt_chunk.data.Samples.wValidBitsPerSample);
+	printf("Kanal-Maske:\t\t0x%03X\r\n", fmt_chunk.data.dwChannelMask);
 	printf("------ END - fmt - Chunk ------\r\n");
 	fclose(ifile);
 	
-	printf("Kalk. Abspielzeit:\t%2.2f s\r\n", header.chunkSize/ (float)	fmt_header.dwAvgBytesPerSec);
+	printf("Kalk. Abspielzeit:\t%2.2f s\r\n", header.chunkSize/ (float)	fmt_chunk.data.dwAvgBytesPerSec);
 	return 0;
 }
