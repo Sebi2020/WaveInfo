@@ -27,6 +27,18 @@
 #ifndef VERSION
 #define VERSION 1.0
 #endif
+
+int find_data_chk(FILE* file) {
+	char ibuf[512];
+	int cur_pos = ftell(file);
+	printf("Position before: %d\r\n", cur_pos);
+	fread(ibuf, 1,5,file);
+	printf("Position after: %ld\r\n", ftell(file));
+	char* pos = strstr(ibuf, "data");
+	printf("ibuf: \"%s\"\r\n", ibuf);
+	printf("strstr: \"%s\"\r\n", pos);
+	return cur_pos;
+}
 void print_audio_fmt(int format_tag) {
 	switch(format_tag) {
 		case 1:
@@ -110,7 +122,7 @@ int main(int argc, char** argv) {
 	printf("RIFF-Type:\tWAVE\r\n");
 	printf("--- HEADER - END ---\r\n\r\n");
 
-	fread(&fmt_chunk,2,22, ifile);
+	fread(&fmt_chunk,1,47, ifile);
 
 	if(strncmp("fmt ", fmt_chunk.chunkId,4) != 0) {
 		fprintf(stderr, "No fmt-Chunk found!");
@@ -132,6 +144,17 @@ int main(int argc, char** argv) {
 	printf("Bit-Tiefe (rec):\t%d Bit\r\n", fmt_chunk.data.Samples.wValidBitsPerSample);
 	printf("Kanal-Maske:\t\t0x%03X\r\n", fmt_chunk.data.dwChannelMask);
 	printf("------ END - fmt - Chunk ------\r\n");
+	uint8_t dbuf[512];
+	int pos_before = ftell(ifile);
+	fread(&dbuf, 4,128,ifile);
+	int off = find_chk_fourcc("data",(char*) dbuf,512);
+	printf("Offset-data: %d\r\n", off);
+	printf("Offset-file: %d\r\n", pos_before + off);
+	fseek(ifile,pos_before+off,0);
+	fread(&dbuf, 4,2,ifile);
+	dbuf[4] = 0;
+	printf("Data-Chunk?: %s\r\n", (char*) &dbuf);
+	printf("feof?: %x\r\n", feof(ifile));
 	fclose(ifile);
 	
 	printf("Kalk. Abspielzeit:\t%2.2f s\r\n", header.chunkSize/ (float)	fmt_chunk.data.dwAvgBytesPerSec);

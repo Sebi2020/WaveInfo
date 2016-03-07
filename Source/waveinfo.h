@@ -16,12 +16,30 @@
 
 #include <stdint.h>
 
+
+// Defines
+
+// RIFF - Format - CHUNK - Types for info table -- see below
+#define RIFF_CHUNK_TYPE_RIFF 1
+#define RIFF_CHUNK_TYPE_LIST 2
+#define RIFF_CHUNK_TYPE_FMT 3
+#define RIFF_CHUNK_TYPE_DATA 4
+
 // Typedefs
+typedef struct chunk_info_entry chunk_info_entry;
 typedef struct RIFF_Header RIFF_header;
 typedef struct fmt_chunk_data fmt_chunk_data;
 typedef struct format_chunk format_chunk;
 
 // Structs
+
+struct chunk_info_entry {
+	uint8_t type;
+	uint32_t length;
+	uint32_t offset;
+	const char* hr_name;
+};
+
 struct RIFF_header{
 	char chunkId[4];			// Format-Identifizierer (RIFF)
 	uint32_t chunkSize;			// Datei-Gräße
@@ -57,3 +75,6 @@ struct format_chunk {
     (uint8_t)(x),0x0,0x0,0x0,0x0,0x0, 0x10, 0x0,0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71
 
 #define WAVEFORMAT_WAVE DEFINE_WAVEFORMATEX_GUID(0x1)
+
+// Function declarations
+int find_chk_fourcc(char* chunk, char* data, int len);
