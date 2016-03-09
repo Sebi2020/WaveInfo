@@ -122,13 +122,12 @@ int main(int argc, char** argv) {
 	printf("RIFF-Type:\tWAVE\r\n");
 	printf("--- HEADER - END ---\r\n\r\n");
 
-	fread(&fmt_chunk,1,47, ifile);
-
-	if(strncmp("fmt ", fmt_chunk.chunkId,4) != 0) {
-		fprintf(stderr, "No fmt-Chunk found!");
+	if(seek_to_fourcc("fmt ", ifile, 512)) {
+		fprintf(stderr, "[ERR] Kein fmt Header gefunden!");
 		exit(3);
 	}
-
+	fread(&fmt_chunk,4,12, ifile);
+	printf("%x\r\n",  fmt_chunk.data.subtype[0]);
 	printf("[INFO] fmt-Chunk vorhanden!\r\n");
 	printf("--------- fmt - Chunk ---------\r\n");
 	printf("ChunkId:\t\tfmt \r\n");
@@ -140,23 +139,24 @@ int main(int argc, char** argv) {
 	printf("Sample-Rate:\t\t%d Samples/s\r\n", fmt_chunk.data.dwSamplesPerSec);
 	printf("Datenrate:\t\t%d kbit/s\r\n", (fmt_chunk.data.dwAvgBytesPerSec*8)/1024);
 	wprintf(L"Frame-Größe:\t\t%d Bytes/Frame\r\n", fmt_chunk.data.wBlockAlign);
-	printf("Bit-Tiefe:\t\t%d Bit\r\n", fmt_chunk.data.wBitsPerSample);
-	printf("Bit-Tiefe (rec):\t%d Bit\r\n", fmt_chunk.data.Samples.wValidBitsPerSample);
-	printf("Kanal-Maske:\t\t0x%03X\r\n", fmt_chunk.data.dwChannelMask);
-	printf("------ END - fmt - Chunk ------\r\n");
-	uint8_t dbuf[512];
-	int pos_before = ftell(ifile);
-	fread(&dbuf, 4,128,ifile);
-	int off = find_chk_fourcc("data",(char*) dbuf,512);
-	printf("Offset-data: %d\r\n", off);
-	printf("Offset-file: %d\r\n", pos_before + off);
-	fseek(ifile,pos_before+off,0);
-	fread(&dbuf, 4,2,ifile);
-	dbuf[4] = 0;
-	printf("Data-Chunk?: %s\r\n", (char*) &dbuf);
-	printf("feof?: %x\r\n", feof(ifile));
+	printf("Bit-Tiefe:\t\t%hu Bit\r\n", fmt_chunk.data.wBitsPerSample);
+	printf("Bit-Tiefe (rec):\t%hu Bit\r\n", fmt_chunk.data.wValidBitsPerSample);
+	printf("Kanal-Maske:\t\t0x%hx\r\n",fmt_chunk.data.dwChannelMask);
+	printf("------ END - fmt - Chunk ------\r\n\r\n");
+	data_chunk data;
+	if(seek_to_fourcc("data",ifile,512)) printf("[INFO] No data chunk found!\r\n");
+	else {
+		printf("[INFO] Data chunk found!\r\n");
+		fread(&data, 4,2,ifile);
+
+	printf("--------- Data-Chunk ----------\r\n");
+	printf("ChunkId:\t\tdata\r\n");
+	wprintf(L"Länge:\t\t\t%3.2f kB\r\n", data.chunkSize/ (float) 1024);
+	wprintf(L"Daten:\t\t\t(Binärdaten)\r\n");
+	printf("Kalk. Abspielzeit:\t%2.2f s\r\n", data.chunkSize/ (float)	fmt_chunk.data.dwAvgBytesPerSec);
+	printf("------- END Data -Chunk -------\r\n\r\n");
+	}
 	fclose(ifile);
 	
-	printf("Kalk. Abspielzeit:\t%2.2f s\r\n", header.chunkSize/ (float)	fmt_chunk.data.dwAvgBytesPerSec);
 	return 0;
 }

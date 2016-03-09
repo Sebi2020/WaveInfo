@@ -30,6 +30,7 @@ typedef struct chunk_info_entry chunk_info_entry;
 typedef struct RIFF_Header RIFF_header;
 typedef struct fmt_chunk_data fmt_chunk_data;
 typedef struct format_chunk format_chunk;
+typedef struct data_chunk data_chunk;
 
 // Structs
 
@@ -48,18 +49,15 @@ struct RIFF_header{
 
 struct fmt_chunk_data {
 	uint8_t wFormatTag[2];			// Audio-Format
-	uint16_t wChannels;				// Kanäle
-	uint32_t dwSamplesPerSec;		// Sample-Rate
-	uint32_t dwAvgBytesPerSec;		// Durchschnittliche (nötige) Übertragungsbandbreite
-	uint16_t wBlockAlign;			// Größe eines Frames in Byte
-	uint16_t wBitsPerSample;		// Auflösung (Quantisierung)
-	union {
-		uint16_t wValidBitsPerSample;	// Aufnahme-Auflösung
-		uint16_t wSamplesPerBlock;		// Samples pro Block (std. 1)
-		uint16_t wReserved;				// Reservierte verwendung durch Third-Party-Software
-	} Samples;
-	uint32_t dwChannelMask;				// Kanal-Maske (siehe unten)
-	uint8_t subtype[16];				// Audio-Daten-Typ GUID (Leitet sich vom Format-Tag ab)
+	uint16_t wChannels __attribute__((packed));		// Kanäle
+	uint32_t dwSamplesPerSec __attribute__((packed));		// Sample-Rate
+	uint32_t dwAvgBytesPerSec __attribute__((packed));		// Durchschnittliche (nötige) Übertragungsbandbreite
+	uint16_t wBlockAlign __attribute__((packed));		// Größe eines Frames in Byte
+	uint16_t wBitsPerSample __attribute__((packed));		// Auflösung (Quantisierung)
+	uint16_t wValidBitsPerSample __attribute__((packed));	// Aufnahme-Auflösung
+	uint16_t cb_size;
+	uint32_t dwChannelMask __attribute__((packed));			// Kanal-Maske (siehe unten)
+	uint8_t subtype[16];			// Audio-Daten-Typ GUID (Leitet sich vom Format-Tag ab)
 } __attribute__((packed));				// wird von Microsoft verwendet für RIFF-Format Erweiterungen
 										// und von MS-Windows Miniport-Treibern
 										
@@ -68,13 +66,20 @@ struct format_chunk {
 	uint32_t chunkSize;		// Länge des fmt (Format)-Chunks	
 	fmt_chunk_data data;
 } __attribute__((packed));
-								
+
+struct data_chunk {
+	char chunkId[4];
+	uint32_t chunkSize;
+	uint8_t* data;
+};
+
 // Macros
 // Subtype GUIDs (MS Extension)
 #define DEFINE_WAVEFORMATEX_GUID(x) \
-    (uint8_t)(x),0x0,0x0,0x0,0x0,0x0, 0x10, 0x0,0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71
+    (uint8_t)(x),0x00,0x00,0x00,0x00,0x00, 0x10, 0x00,0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71
 
-#define WAVEFORMAT_WAVE DEFINE_WAVEFORMATEX_GUID(0x1)
+#define WAVEFORMAT_WAVE DEFINE_WAVEFORMATEX_GUID(0x01)
 
 // Function declarations
 int find_chk_fourcc(char* chunk, char* data, int len);
+int seek_to_fourcc(char* chunk, FILE* file, int maxlength);
