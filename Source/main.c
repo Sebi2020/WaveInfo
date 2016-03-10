@@ -102,20 +102,20 @@ int main(int argc, char** argv) {
 	FILE* ifile = 0x0;
 	ifile = fopen(argv[1], "rb");
 	if(ifile == 0x0) {
-		fprintf(stderr, "Cannot open file \"%s\": %s", argv[1], strerror(errno));
+		fprintf(stderr, "Kann die Datei \"%s\" nicht öffnen: %s", argv[1], strerror(errno));
 		exit(errno);
 	}
 	fread(header.chunkId, 1,4, ifile);
 	if(strncmp("RIFF", header.chunkId,4) != 0) {
-		fprintf(stderr, "Wrong file format!");
+		fprintf(stderr, "Falsches Datei-Format!");
 		exit(1);
 	}
 	fread(&header.chunkSize, 4, 2, ifile);
 	if(strncmp("WAVE", header.riffType,4) != 0) {
-		fprintf(stderr, "This is not a wave file!");
+		fprintf(stderr, "Dies ist keine Wave-Datei!");
 		exit(2);
 	}
-	printf("[INFO] Wave-Header vorhanden!\r\n");
+	printf("[INFO] Wave-Header gefunden!\r\n");
 	printf("------ HEADER ------\r\n");
 	printf("Datei-Format:\tRIFF\r\n");
 	wprintf(L"Länge (Header):\t%4.2f kB\r\n",header.chunkSize/ (float)1024);
@@ -128,7 +128,7 @@ int main(int argc, char** argv) {
 	}
 	fread(&fmt_chunk,4,12, ifile);
 	printf("%x\r\n",  fmt_chunk.data.subtype[0]);
-	printf("[INFO] fmt-Chunk vorhanden!\r\n");
+	printf("[INFO] fmt-Chunk gefunden!\r\n");
 	printf("--------- fmt - Chunk ---------\r\n");
 	printf("ChunkId:\t\tfmt \r\n");
 	wprintf(L"Länge (fmt):\t\t%d Bytes\r\n", fmt_chunk.chunkSize);
@@ -144,9 +144,9 @@ int main(int argc, char** argv) {
 	printf("Kanal-Maske:\t\t0x%hx\r\n",fmt_chunk.data.dwChannelMask);
 	printf("------ END - fmt - Chunk ------\r\n\r\n");
 	data_chunk data;
-	if(seek_to_fourcc("data",ifile,512)) printf("[INFO] No data chunk found!\r\n");
+	if(seek_to_fourcc("data",ifile,512)) printf("[INFO] Kein Daten-Chunk gefunden!\r\n");
 	else {
-		printf("[INFO] Data chunk found!\r\n");
+		printf("[INFO] Data-Chunk gefunden!\r\n");
 		fread(&data, 4,2,ifile);
 
 	printf("--------- Data-Chunk ----------\r\n");
