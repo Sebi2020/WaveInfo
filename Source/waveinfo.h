@@ -1,4 +1,4 @@
-// Copyright Informatikonline.net / Energetic-Tech 2016
+﻿// Copyright Informatikonline.net / Energetic-Tech 2016
 // This file is part of Waveinfo.
 //
 //	Waveinfo is free software: you can redistribute it and/or modify
@@ -24,6 +24,35 @@
 #define RIFF_CHUNK_TYPE_LIST 2
 #define RIFF_CHUNK_TYPE_FMT 3
 #define RIFF_CHUNK_TYPE_DATA 4
+
+
+#define WAVE_FMT_PCM		0x0001 // Pulse Code Modulation (PCM)
+#define WAVE_FMT_ADPCM		0x0002 // Microsoft Adaptive PCM
+#define WAVE_FMT_MPEG		0x0050 // MPEG Audio
+#define WAVE_FMT_YM_ADPCM 	0x0020 // Yamaha Adaptive PCM
+#define WAVE_FMT_MS_ADPCM	0x0021 // Mediaspace Adaptive PCM
+#define WAVE_FMT_CT_ADPCM	0x0200 // Creative Adaptive PCM
+#define WAVE_FMT_DOLBY_AC2	0x0030 // Dolby Digital AC2 Audio
+#define WAVE_FMT_APTX		0x0025 // APTX Audio
+
+#define SPEAK_MASK_FL	0x1
+#define SPEAK_MASK_FR	0x2
+#define SPEAK_MASK_FC	0x4
+#define SPEAK_MASK_LF	0x8
+#define SPEAK_MASK_BL	0x10
+#define SPEAK_MASK_BR	0x20
+#define SPEAK_MASK_FLC	0x40
+#define SPEAK_MASK_FRC	0x80
+#define SPEAK_MASK_BC	0x100
+#define SPEAK_MASK_SL	0x200
+#define SPEAK_MASK_SR	0x400
+#define SPEAK_MASK_TC	0x800
+#define SPEAK_MASK_TFL	0x1000
+#define SPEAK_MASK_TFC	0x2000
+#define SPEAK_MASK_TFR	0x4000
+#define SPEAK_MASK_TBL	0x8000
+#define SPEAK_MASK_TBC	0x10000
+#define SPEAK_MASK_TBR	0x20000
 
 // Typedefs
 typedef struct chunk_info_entry chunk_info_entry;
@@ -83,3 +112,4 @@ struct data_chunk {
 // Function declarations
 int find_chk_fourcc(char* chunk, char* data, int len);
 int seek_to_fourcc(char* chunk, FILE* file, int maxlength);
+void print_channel_detail(uint32_t dwChannelMask);

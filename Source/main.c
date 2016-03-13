@@ -41,8 +41,26 @@ int find_data_chk(FILE* file) {
 }
 void print_audio_fmt(int format_tag) {
 	switch(format_tag) {
-		case 1:
-		printf("Microsoft PCM Audio");
+		case WAVE_FMT_PCM:
+		printf("Pulsecode Modulation (PCM)");
+		break;
+		case WAVE_FMT_DOLBY_AC2:
+		printf("Dolby Digital AC2");
+		break;
+		case WAVE_FMT_ADPCM:
+		printf("Microsoft Adaptive PCM");
+		break;
+		case WAVE_FMT_MPEG:
+		printf("MPEG Audio");
+		break;
+		case WAVE_FMT_YM_ADPCM:
+		printf("Yamaha Adaptive PCM");
+		break;
+		case WAVE_FMT_CT_ADPCM:
+		printf("Creative Adaptive PCM");
+		break;
+		case WAVE_FMT_MS_ADPCM:
+		printf("Mediaspace Adaptive PCM");
 		break;
 		default:
 		printf("Unbekannt (0x%04X)", format_tag);
@@ -127,7 +145,6 @@ int main(int argc, char** argv) {
 		exit(3);
 	}
 	fread(&fmt_chunk,4,12, ifile);
-	printf("%x\r\n",  fmt_chunk.data.subtype[0]);
 	printf("[INFO] fmt-Chunk gefunden!\r\n");
 	printf("--------- fmt - Chunk ---------\r\n");
 	printf("ChunkId:\t\tfmt \r\n");
@@ -141,7 +158,9 @@ int main(int argc, char** argv) {
 	wprintf(L"Frame-Größe:\t\t%d Bytes/Frame\r\n", fmt_chunk.data.wBlockAlign);
 	printf("Bit-Tiefe:\t\t%hu Bit\r\n", fmt_chunk.data.wBitsPerSample);
 	printf("Bit-Tiefe (rec):\t%hu Bit\r\n", fmt_chunk.data.wValidBitsPerSample);
-	printf("Kanal-Maske:\t\t0x%hx\r\n",fmt_chunk.data.dwChannelMask);
+	printf("Kanal-Maske:\t\t");
+	print_channel_detail(fmt_chunk.data.dwChannelMask);
+	printf(" (0x%hx)\r\n",fmt_chunk.data.dwChannelMask);
 	printf("------ END - fmt - Chunk ------\r\n\r\n");
 	data_chunk data;
 	if(seek_to_fourcc("data",ifile,512)) printf("[INFO] Kein Daten-Chunk gefunden!\r\n");
