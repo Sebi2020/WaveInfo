@@ -62,6 +62,9 @@ void print_audio_fmt(int format_tag) {
 		case WAVE_FMT_MS_ADPCM:
 		printf("Mediaspace Adaptive PCM");
 		break;
+		case WAVE_FMT_ALAW:
+		printf("Microsoft A-Law Audio");
+		break;
 		default:
 		printf("Unbekannt (0x%04X)", format_tag);
 	}
@@ -123,6 +126,7 @@ int main(int argc, char** argv) {
 		fprintf(stderr, "Kann die Datei \"%s\" nicht öffnen: %s", argv[1], strerror(errno));
 		exit(errno);
 	}
+
 	fread(header.chunkId, 1,4, ifile);
 	if(strncmp("RIFF", header.chunkId,4) != 0) {
 		fprintf(stderr, "Falsches Datei-Format!");
@@ -139,13 +143,13 @@ int main(int argc, char** argv) {
 	wprintf(L"Länge (Header):\t%4.2f kB\r\n",header.chunkSize/ (float)1024);
 	printf("RIFF-Type:\tWAVE\r\n");
 	printf("--- HEADER - END ---\r\n\r\n");
-
 	if(seek_to_fourcc("fmt ", ifile, 512)) {
 		fprintf(stderr, "[ERR] Kein fmt Header gefunden!");
 		exit(3);
 	}
-	fread(&fmt_chunk,4,12, ifile);
+	fread(&fmt_chunk,2,12, ifile);
 	printf("[INFO] fmt-Chunk gefunden!\r\n");
+	if(fmt_chunk.chunkSize > 18) printf("[INFO] Wave-Extensible Header gefunden!\r\n");
 	printf("--------- fmt - Chunk ---------\r\n");
 	printf("ChunkId:\t\tfmt \r\n");
 	wprintf(L"Länge (fmt):\t\t%d Bytes\r\n", fmt_chunk.chunkSize);
@@ -157,10 +161,13 @@ int main(int argc, char** argv) {
 	printf("Datenrate:\t\t%d kbit/s\r\n", (fmt_chunk.data.dwAvgBytesPerSec*8)/1024);
 	wprintf(L"Frame-Größe:\t\t%d Bytes/Frame\r\n", fmt_chunk.data.wBlockAlign);
 	printf("Bit-Tiefe:\t\t%hu Bit\r\n", fmt_chunk.data.wBitsPerSample);
+	if(fmt_chunk.chunkSize > 18) {
+	fread(&fmt_chunk.data.wValidBitsPerSample, 2,12,ifile);
 	printf("Bit-Tiefe (rec):\t%hu Bit\r\n", fmt_chunk.data.wValidBitsPerSample);
 	printf("Kanal-Maske:\t\t");
 	print_channel_detail(fmt_chunk.data.dwChannelMask);
 	printf(" (0x%hx)\r\n",fmt_chunk.data.dwChannelMask);
+	}
 	printf("------ END - fmt - Chunk ------\r\n\r\n");
 	data_chunk data;
 	if(seek_to_fourcc("data",ifile,512)) printf("[INFO] Kein Daten-Chunk gefunden!\r\n");

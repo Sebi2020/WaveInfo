@@ -34,6 +34,7 @@
 #define WAVE_FMT_CT_ADPCM	0x0200 // Creative Adaptive PCM
 #define WAVE_FMT_DOLBY_AC2	0x0030 // Dolby Digital AC2 Audio
 #define WAVE_FMT_APTX		0x0025 // APTX Audio
+#define WAVE_FMT_ALAW		0x0006 // Microsoft A-Law Audio
 
 #define SPEAK_MASK_FL	0x1
 #define SPEAK_MASK_FR	0x2
