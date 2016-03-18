@@ -154,19 +154,19 @@ int main(int argc, char** argv) {
 	printf("ChunkId:\t\tfmt \r\n");
 	wprintf(L"Länge (fmt):\t\t%d Bytes\r\n", fmt_chunk.chunkSize);
 	printf("Audio-Format:\t\t");
-	print_audio_fmt(*((uint16_t*) fmt_chunk.data.wFormatTag));
+	print_audio_fmt(*((uint16_t*) fmt_chunk.chunk.data.wFormatTag));
 	wprintf(L"Kanäle:\t\t\t");
-	print_channels(fmt_chunk.data.wChannels);
-	printf("Sample-Rate:\t\t%d Samples/s\r\n", fmt_chunk.data.dwSamplesPerSec);
-	printf("Datenrate:\t\t%d kbit/s\r\n", (fmt_chunk.data.dwAvgBytesPerSec*8)/1024);
-	wprintf(L"Frame-Größe:\t\t%d Bytes/Frame\r\n", fmt_chunk.data.wBlockAlign);
-	printf("Bit-Tiefe:\t\t%hu Bit\r\n", fmt_chunk.data.wBitsPerSample);
+	print_channels(fmt_chunk.chunk.data.wChannels);
+	printf("Sample-Rate:\t\t%d Samples/s\r\n", fmt_chunk.chunk.data.dwSamplesPerSec);
+	printf("Datenrate:\t\t%d kbit/s\r\n", (fmt_chunk.chunk.data.dwAvgBytesPerSec*8)/1024);
+	wprintf(L"Frame-Größe:\t\t%d Bytes/Frame\r\n", fmt_chunk.chunk.data.wBlockAlign);
+	printf("Bit-Tiefe:\t\t%hu Bit\r\n", fmt_chunk.chunk.data.wBitsPerSample);
 	if(fmt_chunk.chunkSize > 18) {
-	fread(&fmt_chunk.data.wValidBitsPerSample, 2,12,ifile);
-	printf("Bit-Tiefe (rec):\t%hu Bit\r\n", fmt_chunk.data.wValidBitsPerSample);
+	fread(&fmt_chunk.chunk.data_ex.wValidBitsPerSample, 2,12,ifile);
+	printf("Bit-Tiefe (rec):\t%hu Bit\r\n", fmt_chunk.chunk.data_ex.wValidBitsPerSample);
 	printf("Kanal-Maske:\t\t");
-	print_channel_detail(fmt_chunk.data.dwChannelMask);
-	printf(" (0x%hx)\r\n",fmt_chunk.data.dwChannelMask);
+	print_channel_detail(fmt_chunk.chunk.data_ex.dwChannelMask);
+	printf(" (0x%hx)\r\n",fmt_chunk.chunk.data_ex.dwChannelMask);
 	}
 	printf("------ END - fmt - Chunk ------\r\n\r\n");
 	data_chunk data;
@@ -179,7 +179,7 @@ int main(int argc, char** argv) {
 	printf("ChunkId:\t\tdata\r\n");
 	wprintf(L"Länge:\t\t\t%3.2f kB\r\n", data.chunkSize/ (float) 1024);
 	wprintf(L"Daten:\t\t\t(Binärdaten)\r\n");
-	printf("Kalk. Abspielzeit:\t%2.2f s\r\n", data.chunkSize/ (float)	fmt_chunk.data.dwAvgBytesPerSec);
+	printf("Kalk. Abspielzeit:\t%2.2f s\r\n", data.chunkSize/ (float)	fmt_chunk.chunk.data.dwAvgBytesPerSec);
 	printf("------- END Data -Chunk -------\r\n\r\n");
 	}
 	fclose(ifile);

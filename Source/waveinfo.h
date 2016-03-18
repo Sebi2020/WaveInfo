@@ -77,24 +77,36 @@ struct RIFF_header{
 	char riffType[4];			// Container-Format (WAVE)
 };
 
-struct fmt_chunk_data {
+struct fmt_chunk_data_ex {
 	uint8_t wFormatTag[2];			// Audio-Format
-	uint16_t wChannels __attribute__((packed));		// Kanäle
-	uint32_t dwSamplesPerSec __attribute__((packed));		// Sample-Rate
-	uint32_t dwAvgBytesPerSec __attribute__((packed));		// Durchschnittliche (nötige) Übertragungsbandbreite
-	uint16_t wBlockAlign __attribute__((packed));		// Größe eines Frames in Byte
-	uint16_t wBitsPerSample __attribute__((packed));		// Auflösung (Quantisierung)
-	uint16_t wValidBitsPerSample __attribute__((packed));	// Aufnahme-Auflösung
+	uint16_t wChannels;		// Kanäle
+	uint32_t dwSamplesPerSec;		// Sample-Rate
+	uint32_t dwAvgBytesPerSec;		// Durchschnittliche (nötige) Übertragungsbandbreite
+	uint16_t wBlockAlign;		// Größe eines Frames in Byte
+	uint16_t wBitsPerSample;		// Auflösung (Quantisierung)
+	uint16_t wValidBitsPerSample;	// Aufnahme-Auflösung
 	uint16_t cb_size;
-	uint32_t dwChannelMask __attribute__((packed));			// Kanal-Maske (siehe unten)
+	uint32_t dwChannelMask;			// Kanal-Maske (siehe unten)
 	uint8_t subtype[16];			// Audio-Daten-Typ GUID (Leitet sich vom Format-Tag ab)
 } __attribute__((packed));				// wird von Microsoft verwendet für RIFF-Format Erweiterungen
-										// und von MS-Windows Miniport-Treibern
+			
+struct fmt_chunk_data {
+	uint8_t wFormatTag[2];			// Audio-Format
+	uint16_t wChannels;		// Kanäle
+	uint32_t dwSamplesPerSec;		// Sample-Rate
+	uint32_t dwAvgBytesPerSec;		// Durchschnittliche (nötige) Übertragungsbandbreite
+	uint16_t wBlockAlign;		// Größe eines Frames in Byte
+	uint16_t wBitsPerSample;		// Auflösung (Quantisierung)
+	uint16_t cb_size;
+} __attribute__((packed));
 										
 struct format_chunk {
 	char chunkId[4];			// fmt-Chunk Identifizierer (fmt )
 	uint32_t chunkSize;		// Länge des fmt (Format)-Chunks	
-	fmt_chunk_data data;
+	union {
+		struct fmt_chunk_data data;
+		struct fmt_chunk_data_ex data_ex;
+	} chunk;
 } __attribute__((packed));
 
 struct data_chunk {
