@@ -78,7 +78,7 @@ struct RIFF_header{
 };
 
 struct fmt_chunk_data_ex {
-	uint8_t wFormatTag[2];			// Audio-Format
+	uint16_t wFormatTag;			// Audio-Format
 	uint16_t wChannels;		// Kanäle
 	uint32_t dwSamplesPerSec;		// Sample-Rate
 	uint32_t dwAvgBytesPerSec;		// Durchschnittliche (nötige) Übertragungsbandbreite
@@ -91,7 +91,7 @@ struct fmt_chunk_data_ex {
 } __attribute__((packed));				// wird von Microsoft verwendet für RIFF-Format Erweiterungen
 			
 struct fmt_chunk_data {
-	uint8_t wFormatTag[2];			// Audio-Format
+	uint16_t wFormatTag;			// Audio-Format
 	uint16_t wChannels;		// Kanäle
 	uint32_t dwSamplesPerSec;		// Sample-Rate
 	uint32_t dwAvgBytesPerSec;		// Durchschnittliche (nötige) Übertragungsbandbreite

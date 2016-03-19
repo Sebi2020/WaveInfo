@@ -154,7 +154,7 @@ int main(int argc, char** argv) {
 	printf("ChunkId:\t\tfmt \r\n");
 	wprintf(L"Länge (fmt):\t\t%d Bytes\r\n", fmt_chunk.chunkSize);
 	printf("Audio-Format:\t\t");
-	print_audio_fmt(*((uint16_t*) fmt_chunk.chunk.data.wFormatTag));
+	print_audio_fmt(fmt_chunk.chunk.data.wFormatTag);
 	wprintf(L"Kanäle:\t\t\t");
 	print_channels(fmt_chunk.chunk.data.wChannels);
 	printf("Sample-Rate:\t\t%d Samples/s\r\n", fmt_chunk.chunk.data.dwSamplesPerSec);
