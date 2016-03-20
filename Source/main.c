@@ -143,7 +143,7 @@ int main(int argc, char** argv) {
 	wprintf(L"Länge (Header):\t%4.2f kB\r\n",header.chunkSize/ (float)1024);
 	printf("RIFF-Type:\tWAVE\r\n");
 	printf("--- HEADER - END ---\r\n\r\n");
-	if(seek_to_fourcc("fmt ", ifile, 512)) {
+	if(seek_to_fourcc("fmt ", ifile)) {
 		fprintf(stderr, "[ERR] Kein fmt Header gefunden!");
 		exit(3);
 	}
@@ -170,7 +170,7 @@ int main(int argc, char** argv) {
 	}
 	printf("------ END - fmt - Chunk ------\r\n\r\n");
 	data_chunk data;
-	if(seek_to_fourcc("data",ifile,512)) printf("[INFO] Kein Daten-Chunk gefunden!\r\n");
+	if(seek_to_fourcc("data",ifile)) printf("[INFO] Kein Daten-Chunk gefunden!\r\n");
 	else {
 		printf("[INFO] Data-Chunk gefunden!\r\n");
 		fread(&data, 4,2,ifile);

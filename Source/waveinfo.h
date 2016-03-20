@@ -88,7 +88,7 @@ struct fmt_chunk_data_ex {
 	uint16_t cb_size;
 	uint32_t dwChannelMask;			// Kanal-Maske (siehe unten)
 	uint8_t subtype[16];			// Audio-Daten-Typ GUID (Leitet sich vom Format-Tag ab)
-} __attribute__((packed));				// wird von Microsoft verwendet für RIFF-Format Erweiterungen
+};				// wird von Microsoft verwendet für RIFF-Format Erweiterungen
 			
 struct fmt_chunk_data {
 	uint16_t wFormatTag;			// Audio-Format
@@ -98,7 +98,7 @@ struct fmt_chunk_data {
 	uint16_t wBlockAlign;		// Größe eines Frames in Byte
 	uint16_t wBitsPerSample;		// Auflösung (Quantisierung)
 	uint16_t cb_size;
-} __attribute__((packed));
+};
 										
 struct format_chunk {
 	char chunkId[4];			// fmt-Chunk Identifizierer (fmt )
@@ -107,7 +107,7 @@ struct format_chunk {
 		struct fmt_chunk_data data;
 		struct fmt_chunk_data_ex data_ex;
 	} chunk;
-} __attribute__((packed));
+};
 
 struct data_chunk {
 	char chunkId[4];
@@ -124,5 +124,5 @@ struct data_chunk {
 
 // Function declarations
 int find_chk_fourcc(char* chunk, char* data, int len);
-int seek_to_fourcc(char* chunk, FILE* file, int maxlength);
+int seek_to_fourcc(char* chunk, FILE* file);
 void print_channel_detail(uint32_t dwChannelMask);

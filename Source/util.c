@@ -16,13 +16,13 @@ int find_chk_fourcc(char* chunk, char* data, int len) {
 	return i;
 }
 
-int seek_to_fourcc(char* fourcc, FILE* file, int maxlength) {
+int seek_to_fourcc(char* fourcc, FILE* file) {
 	fseek(file, 0,0);
 	//int pos_before = ftell(file);
-	char buf[maxlength];
+	char buf[512];
 	int offset = 0;
 	fread(buf, 4,128,file);
-	offset = find_chk_fourcc(fourcc, buf, maxlength);
+	offset = find_chk_fourcc(fourcc, buf, 512);
 	if(offset == -1) {
 		return -1;
 	}
