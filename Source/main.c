@@ -24,6 +24,10 @@
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
+#ifdef CMAKE_BUILD
+#include "WaveInfoConfig.h"
+#endif
+
 #ifndef VERSION
 #define VERSION 1.0
 #endif
