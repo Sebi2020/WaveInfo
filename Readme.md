@@ -18,6 +18,4 @@ cmake ../Source -G "Visual Studio 14 2015"
 ```
 Open *Visual Studio* and press build or function key *f7*.
 ## Changelog
- * **Version 1.0**: A few changes
- * **Version 1.1**: A few more changes
- * **Version 1.2**: A bla changes
+* **Version 1.0**: Support for fmt and data chunks
