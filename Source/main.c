@@ -19,7 +19,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <locale.h>
-#include <Windows.h>
+//#include <Windows.h>
 #include "waveinfo.h"
 
 #define STRINGIFY(x) #x

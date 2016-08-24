@@ -7,6 +7,7 @@ configure_file (
 	"${PROJECT_BINARY_DIR}/WaveInfoConfig.h"
 )
 add_executable(WaveInfo main.c util.c)
-target_compile_options(WaveInfo PUBLIC -Wall -std=c99 -O9)
+set_property(TARGET WaveInfo PROPERTY C_STANDARD 99)
+set_property(TARGET WaveInfo PROPERTY C_STANDARD_REQUIRED ON)
 target_include_directories (WaveInfo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories("${PROJECT_BINARY_DIR}")
