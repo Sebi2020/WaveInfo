@@ -31,13 +31,13 @@ int seek_to_fourcc(char* fourcc, FILE* file) {
 }
 
 void print_channel_detail(uint32_t dwChannelMask) {
-	if(SPEAK_MASK_FL & dwChannelMask) printf("Vorne links");
-	if(SPEAK_MASK_FR & dwChannelMask) printf(", vorne rechts");
-	if(SPEAK_MASK_FC & dwChannelMask) printf(", vorne mitte");
-	if(SPEAK_MASK_LF & dwChannelMask) printf(", LO-Kanal (Subwoofer)");
-	if(SPEAK_MASK_BL & dwChannelMask) printf(", hinten links");
-	if(SPEAK_MASK_BC & dwChannelMask) printf(", hinten mitte");
-	if(SPEAK_MASK_BR & dwChannelMask) printf(", hinten rechts");
-	if(SPEAK_MASK_SL & dwChannelMask) printf(", seitlich links");
-	if(SPEAK_MASK_SR & dwChannelMask) printf(", seitlich rechts");
+	if(SPEAK_MASK_FL & dwChannelMask) printf("front left");
+	if(SPEAK_MASK_FR & dwChannelMask) printf(", front right");
+	if(SPEAK_MASK_FC & dwChannelMask) printf(", front middle");
+	if(SPEAK_MASK_LF & dwChannelMask) printf(", LO-Channel (Subwoofer)");
+	if(SPEAK_MASK_BL & dwChannelMask) printf(", surround left");
+	if(SPEAK_MASK_BC & dwChannelMask) printf(", surround middle");
+	if(SPEAK_MASK_BR & dwChannelMask) printf(", surround right");
+	if(SPEAK_MASK_SL & dwChannelMask) printf(", rear left");
+	if(SPEAK_MASK_SR & dwChannelMask) printf(", rear right");
 }

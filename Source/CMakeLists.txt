@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.8.11)
 project(WaveInfo)
-set (WaveInfo_VERSION 1.0.0)
+set (WaveInfo_VERSION 1.0.1)
 add_definitions(-DCMAKE_BUILD)
 configure_file (
 	"${PROJECT_SOURCE_DIR}/WaveInfoConfig.h.in"

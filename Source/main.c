@@ -168,7 +168,7 @@ int main(int argc, char** argv) {
 	printf("Length (fmt):\t\t%d Bytes\r\n", fmt_chunk.chunkSize);
 	printf("Audioformat:\t\t");
 	print_audio_fmt(fmt_chunk.chunk.data.wFormatTag);
-	printf("Channels:\t\t\t");
+	printf("Channels:\t\t");
 	print_channels(fmt_chunk.chunk.data.wChannels);
 	printf("Sample-rate:\t\t%d Samples/s\r\n", fmt_chunk.chunk.data.dwSamplesPerSec);
 	printf("Data-rate:\t\t%d kbit/s\r\n", (fmt_chunk.chunk.data.dwAvgBytesPerSec*8)/1024);
@@ -191,7 +191,7 @@ int main(int argc, char** argv) {
 	printf("--------- Data-Chunk ----------\r\n");
 	printf("ChunkId:\t\tdata\r\n");
 	printf("Length:\t\t\t%3.2f kB\r\n", data.chunkSize/ (float) 1024);
-	printf("Data:\t\t\t(Binärdaten)\r\n");
+	printf("Data:\t\t\t(Binarydata)\r\n");
 	printf("Calc. play duration:\t%2.2f s\r\n", data.chunkSize/ (float)	fmt_chunk.chunk.data.dwAvgBytesPerSec);
 	printf("------- END Data -Chunk -------\r\n\r\n");
 	}
