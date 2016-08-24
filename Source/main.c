@@ -1,4 +1,4 @@
-// Copyright Informatikonline.net / Energetic Tech 2016
+Ôªø// Copyright Informatikonline.net / Energetic Tech 2016
 // This file is part of Waveinfo.
 //
 //	Waveinfo is free software: you can redistribute it and/or modify
@@ -20,6 +20,8 @@
 #include <stdint.h>
 #include <locale.h>
 #ifndef _WIN32
+#define _UNICODE
+#define UNICODE
 #include <errno.h>
 #endif
 //#include <Windows.h>
@@ -32,11 +34,8 @@
 #include "WaveInfoConfig.h"
 #endif
 
-//#ifdef _MSC_VER
-//#pragma execution_character_set("utf-8")
-//#endif
 #ifndef VERSION
-#define VERSION 1.0
+#define VERSION 1.01
 #endif
 
 int find_data_chk(FILE* file) {
@@ -77,7 +76,7 @@ void print_audio_fmt(int format_tag) {
 		printf("Microsoft A-Law Audio");
 		break;
 		default:
-		printf("Unbekannt (0x%04X)", format_tag);
+		printf("Unkown (0x%04X)", format_tag);
 	}
 	printf("\r\n");
 }
@@ -114,8 +113,8 @@ void print_channels(int channel_num) {
 int main(int argc, char** argv) {
 	setlocale(LC_ALL, "");
 	if(argc < 2) {
-		fprintf(stderr, "Geben Sie eine Wave-Datei an: %s [Dateiname]\r\n\t-c zeigt Copyrightinformationen an\r\n\t-w zeigt Gew‰hrleistungs-Informationen an\r\n\
-\t-v gibt die Programmversion aus\r\n", argv[0]);
+		fprintf(stderr, "Specify a wave file: %s [Dateiname]\r\n\t-c show Copyright information\r\n\t-w shows warranty information\r\n\
+\t-v prints programm version\r\n", argv[0]);
 		exit(1);
 	}
 	// as
@@ -137,63 +136,63 @@ int main(int argc, char** argv) {
 	FILE* ifile = 0x0;
 	ifile = fopen(argv[1], "rb");
 	if(ifile == 0x0) {
-		fprintf(stderr, "Kann die Datei \"%s\" nicht ˆffnen: %s", argv[1], strerror(errno));
+		fprintf(stderr, "Cannot open file \"%s\": %s", argv[1], strerror(errno));
 		exit(errno);
 	}
 
 	fread(header.chunkId, 1,4, ifile);
 	if(strncmp("RIFF", header.chunkId,4) != 0) {
-		fprintf(stderr, "Falsches Datei-Format!");
+		fprintf(stderr, "Wrong file format!");
 		exit(1);
 	}
 	fread(&header.chunkSize, 4, 2, ifile);
 	if(strncmp("WAVE", header.riffType,4) != 0) {
-		fprintf(stderr, "Dies ist keine Wave-Datei!");
+		fprintf(stderr, "This is not a wave file!");
 		exit(2);
 	}
-	printf("[INFO] Wave-Header gefunden!\r\n");
+	printf("[INFO] Wave header found!\r\n");
 	printf("------ HEADER ------\r\n");
-	printf("Datei-Format:\tRIFF\r\n");
-	printf("L‰nge (Header):\t%4.2f kB\r\n",header.chunkSize/ (float)1024);
+	printf("File-Format:\tRIFF\r\n");
+	printf("Length (header):\t%4.2f kB\r\n",header.chunkSize/ (float)1024);
 	printf("RIFF-Type:\tWAVE\r\n");
 	printf("--- HEADER - END ---\r\n\r\n");
 	if(seek_to_fourcc("fmt ", ifile)) {
-		fprintf(stderr, "[ERR] Kein fmt Header gefunden!");
+		fprintf(stderr, "[ERR] No fmt header present!");
 		exit(3);
 	}
 	fread(&fmt_chunk,2,12, ifile);
-	printf("[INFO] fmt-Chunk gefunden!\r\n");
-	if(fmt_chunk.chunkSize > 18) printf("[INFO] Wave-Extensible Header gefunden!\r\n");
+	printf("[INFO] Found fmt-chunk!\r\n");
+	if(fmt_chunk.chunkSize > 18) printf("[INFO] Wave-Extensible header found!\r\n");
 	printf("--------- fmt - Chunk ---------\r\n");
 	printf("ChunkId:\t\tfmt \r\n");
-	printf("L‰nge (fmt):\t\t%d Bytes\r\n", fmt_chunk.chunkSize);
-	printf("Audio-Format:\t\t");
+	printf("Length (fmt):\t\t%d Bytes\r\n", fmt_chunk.chunkSize);
+	printf("Audioformat:\t\t");
 	print_audio_fmt(fmt_chunk.chunk.data.wFormatTag);
-	printf("Kan‰le:\t\t\t");
+	printf("Channels:\t\t\t");
 	print_channels(fmt_chunk.chunk.data.wChannels);
-	printf("Sample-Rate:\t\t%d Samples/s\r\n", fmt_chunk.chunk.data.dwSamplesPerSec);
-	printf("Datenrate:\t\t%d kbit/s\r\n", (fmt_chunk.chunk.data.dwAvgBytesPerSec*8)/1024);
-	printf("Frame-Grˆﬂe:\t\t%d Bytes/Frame\r\n", fmt_chunk.chunk.data.wBlockAlign);
-	printf("Bit-Tiefe:\t\t%hu Bit\r\n", fmt_chunk.chunk.data.wBitsPerSample);
+	printf("Sample-rate:\t\t%d Samples/s\r\n", fmt_chunk.chunk.data.dwSamplesPerSec);
+	printf("Data-rate:\t\t%d kbit/s\r\n", (fmt_chunk.chunk.data.dwAvgBytesPerSec*8)/1024);
+	printf("Frame-Size:\t\t%d Bytes/Frame\r\n", fmt_chunk.chunk.data.wBlockAlign);
+	printf("Bit-Depth:\t\t%hu Bit\r\n", fmt_chunk.chunk.data.wBitsPerSample);
 	if(fmt_chunk.chunkSize > 18) {
 	fread(&fmt_chunk.chunk.data_ex.wValidBitsPerSample, 2,12,ifile);
-	printf("Bit-Tiefe (rec):\t%hu Bit\r\n", fmt_chunk.chunk.data_ex.wValidBitsPerSample);
-	printf("Kanal-Maske:\t\t");
+	printf("Bit-Depth (rec):\t%hu Bit\r\n", fmt_chunk.chunk.data_ex.wValidBitsPerSample);
+	printf("Channel-Mask:\t\t");
 	print_channel_detail(fmt_chunk.chunk.data_ex.dwChannelMask);
 	printf(" (0x%hx)\r\n",fmt_chunk.chunk.data_ex.dwChannelMask);
 	}
 	printf("------ END - fmt - Chunk ------\r\n\r\n");
 	data_chunk data;
-	if(seek_to_fourcc("data",ifile)) printf("[INFO] Kein Daten-Chunk gefunden!\r\n");
+	if(seek_to_fourcc("data",ifile)) printf("[INFO] No Data-Chunk present!\r\n");
 	else {
-		printf("[INFO] Data-Chunk gefunden!\r\n");
+		printf("[INFO] Data-Chunk present!\r\n");
 		fread(&data, 4,2,ifile);
 
 	printf("--------- Data-Chunk ----------\r\n");
 	printf("ChunkId:\t\tdata\r\n");
-	printf("L‰nge:\t\t\t%3.2f kB\r\n", data.chunkSize/ (float) 1024);
-	printf("Daten:\t\t\t(Bin‰rdaten)\r\n");
-	printf("Kalk. Abspielzeit:\t%2.2f s\r\n", data.chunkSize/ (float)	fmt_chunk.chunk.data.dwAvgBytesPerSec);
+	printf("Length:\t\t\t%3.2f kB\r\n", data.chunkSize/ (float) 1024);
+	printf("Data:\t\t\t(Bin√§rdaten)\r\n");
+	printf("Calc. play duration:\t%2.2f s\r\n", data.chunkSize/ (float)	fmt_chunk.chunk.data.dwAvgBytesPerSec);
 	printf("------- END Data -Chunk -------\r\n\r\n");
 	}
 	fclose(ifile);
