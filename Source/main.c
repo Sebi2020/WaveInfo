@@ -19,6 +19,9 @@
 #include <string.h>
 #include <stdint.h>
 #include <locale.h>
+#ifndef _WIN32
+#include <errno.h>
+#endif
 //#include <Windows.h>
 #include "waveinfo.h"
 
