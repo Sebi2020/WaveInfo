@@ -127,6 +127,9 @@ int main(int argc, char** argv) {
 			exit(0);
 	} else if(strcmp(argv[1], "-v") == 0) {
 			printf("Programmversion: %s", TOSTRING(VERSION));
+			#ifdef _WIN32
+			printf("\n Windows Build");
+			#endif
 			exit(0);
 	}
 	struct RIFF_header header;
