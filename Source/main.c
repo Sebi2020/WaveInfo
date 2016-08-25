@@ -125,9 +125,9 @@ int main(int argc, char** argv) {
 			printf("Copyright (C) 2016 Informatikonline.net / Energetic Tech\r\n");
 			exit(0);
 	} else if(strcmp(argv[1], "-v") == 0) {
-			printf("Programmversion: %s", TOSTRING(VERSION));
+			printf("Programmversion: %s\r\n", TOSTRING(VERSION));
 			#ifdef _WIN32
-			printf("\n Windows Build");
+			printf(" Windows Build\r\n");
 			#endif
 			exit(0);
 	}
